@@ -1,0 +1,27 @@
+{
+  "name": "dcm-image-editor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "compile": "yarn tsc -p ./tsconfig.json",
+    "run-test": "node ./out/test.js",
+    "test": "yarn compile && yarn run-test"
+  },
+  "author": "Ti2",
+  "devDependencies": {
+    "yarn": "^1.22.19",
+    "typescript": "^5.1.6",
+    "@types/fs-extra": "^11.0.1",
+    "@types/node": "^20.5.1",
+    "@types/pngjs": "^6.0.1"
+  },
+  "dependencies": {
+    "dcmjs": "^0.29.8",
+    "dicom-parser": "^1.8.21",
+    "fs-extra": "^11.1.1",
+    "pngjs": "^7.0.0",
+    "sharp": "^0.32.5"
+  }
+}
