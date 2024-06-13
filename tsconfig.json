@@ -1,6 +1,6 @@
 {
   "include": [
-    "./src/**/*"
+    "./**/*.ts"
   ],
   "compilerOptions": {
     "experimentalDecorators": true, //开启装饰器【必须】
