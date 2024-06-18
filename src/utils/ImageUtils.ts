@@ -101,7 +101,7 @@ export class ImageUtils {
      * @param filename 文件名 (不包含.png)
      * @param config 宽度、高度、压缩等级
      */
-    static toPngSharp(_4ChannelPixelArr: PngPixelArray, dir: string, filename: string, config: {
+    static toPngSharp(_4ChannelPixelArr: PngPixelArray, config: {
         width: number,
         height: number,
         // 图像压缩等级
@@ -120,7 +120,7 @@ export class ImageUtils {
      * @param filename 文件名 (不包含.jpeg)
      * @param config 宽度、高度、图像质量（1-100）
      */
-    static toJpeSharpg(_4ChannelPixelArr: PngPixelArray, dir: string, filename: string, config: {
+    static toJpeSharpg(_4ChannelPixelArr: PngPixelArray, config: {
         width: number,
         height: number,
         // 图像质量（1-100）
@@ -139,7 +139,7 @@ export class ImageUtils {
      * @param filename 文件名 (不包含.tiff)
      * @param config 宽度、高度、图像质量（1-100），位深 (1,2,4,8)
      */
-    static toTiffSharp(_4ChannelPixelArr: PngPixelArray, dir: string, filename: string, config: {
+    static toTiffSharp(_4ChannelPixelArr: PngPixelArray, config: {
         width: number,
         height: number,
         quality?: number,
@@ -158,7 +158,7 @@ export class ImageUtils {
      * @param filename 文件名 (不包含.bmp)
      * @param config 宽度、高度、图像质量（1-100）
      */
-    static toBmpSharp(_4ChannelPixelArr: PngPixelArray, dir: string, filename: string, config: {
+    static toBmpSharp(_4ChannelPixelArr: PngPixelArray, config: {
         width: number,
         height: number,
     }) {
@@ -183,7 +183,7 @@ export class ImageUtils {
         // 图像压缩等级
         compressionLevel?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9,
     }): Promise<Sharp.OutputInfo> {
-        return ImageUtils.toPngSharp(_4ChannelPixelArr, dir, filename, config).toFile(`${dir}/${filename}.png`);
+        return ImageUtils.toPngSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.png`);
     }
     /**
      * 4通道像素数组存储为jpeg
@@ -198,7 +198,7 @@ export class ImageUtils {
         // 图像质量（1-100）
         quality?: number,
     }) {
-        return ImageUtils.toJpeSharpg(_4ChannelPixelArr, dir, filename, config).toFile(`${dir}/${filename}.jpg`);
+        return ImageUtils.toJpeSharpg(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.jpg`);
     }
     /**
      * 4通道像素数组存储为tiff
@@ -212,7 +212,7 @@ export class ImageUtils {
         height: number,
         quality?: number,
     }) {
-        return ImageUtils.toTiffSharp(_4ChannelPixelArr, dir, filename, config).toFile(`${dir}/${filename}.tiff`);
+        return ImageUtils.toTiffSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.tiff`);
     }
     /**
      * 4通道像素数组存储为bmp
@@ -225,7 +225,7 @@ export class ImageUtils {
         width: number,
         height: number,
     }) {
-        return ImageUtils.toBmpSharp(_4ChannelPixelArr, dir, filename, config).toFile(`${dir}/${filename}.bmp`);
+        return ImageUtils.toBmpSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.bmp`);
     }
 
 
@@ -239,13 +239,13 @@ export class ImageUtils {
      * @param filename 文件名 (不包含.png)
      * @param config 宽度、高度、压缩等级
      */
-    static async toPngBin(_4ChannelPixelArr: PngPixelArray, dir: string, filename: string, config: {
+    static async toPngBin(_4ChannelPixelArr: PngPixelArray, config: {
         width: number,
         height: number,
         // 图像压缩等级
         compressionLevel?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9,
     }): Promise<Buffer> {
-        return ImageUtils.toPngSharp(_4ChannelPixelArr, dir, filename, config).toBuffer();
+        return ImageUtils.toPngSharp(_4ChannelPixelArr, config).toBuffer();
     }
     /**
      * 4通道像素数组转为jpeg二进制文件数据
@@ -254,13 +254,13 @@ export class ImageUtils {
      * @param filename 文件名 (不包含.jpeg)
      * @param config 宽度、高度、图像质量（1-100）
      */
-    static async toJpegBin(_4ChannelPixelArr: PngPixelArray, dir: string, filename: string, config: {
+    static async toJpegBin(_4ChannelPixelArr: PngPixelArray, config: {
         width: number,
         height: number,
         // 图像质量（1-100）
         quality?: number,
     }) {
-        return ImageUtils.toJpeSharpg(_4ChannelPixelArr, dir, filename, config).toBuffer();
+        return ImageUtils.toJpeSharpg(_4ChannelPixelArr, config).toBuffer();
     }
     /**
      * 4通道像素数组转为tiff二进制文件数据
@@ -269,12 +269,12 @@ export class ImageUtils {
      * @param filename 文件名 (不包含.tiff)
      * @param config 宽度、高度、图像质量（1-100），位深 (1,2,4,8)
      */
-    static async toTiffBin(_4ChannelPixelArr: PngPixelArray, dir: string, filename: string, config: {
+    static async toTiffBin(_4ChannelPixelArr: PngPixelArray, config: {
         width: number,
         height: number,
         quality?: number,
     }) {
-        return ImageUtils.toTiffSharp(_4ChannelPixelArr, dir, filename, config).toBuffer();
+        return ImageUtils.toTiffSharp(_4ChannelPixelArr, config).toBuffer();
     }
     /**
      * 4通道像素数组转为bmp二进制文件数据
@@ -283,11 +283,11 @@ export class ImageUtils {
      * @param filename 文件名 (不包含.bmp)
      * @param config 宽度、高度、图像质量（1-100）
      */
-    static async toBmpBin(_4ChannelPixelArr: PngPixelArray, dir: string, filename: string, config: {
+    static async toBmpBin(_4ChannelPixelArr: PngPixelArray, config: {
         width: number,
         height: number,
     }) {
-        return ImageUtils.toBmpSharp(_4ChannelPixelArr, dir, filename, config).toBuffer();
+        return ImageUtils.toBmpSharp(_4ChannelPixelArr, config).toBuffer();
     }
 }
 
