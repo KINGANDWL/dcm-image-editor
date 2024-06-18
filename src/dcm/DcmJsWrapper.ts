@@ -68,9 +68,9 @@ export class DcmJsWrapper {
         } else {
             if (typeof (dcmFileBuffer_or_filePath) == "string") {
                 let arrayBuffer = fs_extra.readFileSync(dcmFileBuffer_or_filePath);
-                this._dictionary = DcmJs.data.DicomMessage.readFile(arrayBuffer.buffer);
+                this._dictionary = DcmJs.data.DicomMessage.readFile(arrayBuffer.buffer, { ignoreErrors: true });
             } else {
-                this._dictionary = DcmJs.data.DicomMessage.readFile(dcmFileBuffer_or_filePath.buffer);
+                this._dictionary = DcmJs.data.DicomMessage.readFile(dcmFileBuffer_or_filePath.buffer, { ignoreErrors: true });
             }
         }
     }
@@ -154,7 +154,7 @@ export class DcmJsWrapper {
         let size = { Rows: 0, Columns: 0 }
         let buffer: Uint8Array = new Uint8Array(arr.buffer); //8位存储
 
-        if(buffer.length % 2 != 0){
+        if (buffer.length % 2 != 0) {
             // 无论是任何情况，buffer转8位之后像素一定是偶数
             throw new Error("buffer lost some pixel");
         }
@@ -186,7 +186,7 @@ export class DcmJsWrapper {
             buffer = Buffer.concat([buffer, Uint8Array.from(pixelArr)])
         } else if (len < 0) {
             //分辨率小于像素，则删除
-            buffer = buffer.slice(0, count*2)
+            buffer = buffer.slice(0, count * 2)
         }
 
 

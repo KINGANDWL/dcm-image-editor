@@ -17,10 +17,10 @@ class DcmJsWrapper {
         else {
             if (typeof (dcmFileBuffer_or_filePath) == "string") {
                 let arrayBuffer = fs_extra.readFileSync(dcmFileBuffer_or_filePath);
-                this._dictionary = DcmJs.data.DicomMessage.readFile(arrayBuffer.buffer);
+                this._dictionary = DcmJs.data.DicomMessage.readFile(arrayBuffer.buffer, { ignoreErrors: true });
             }
             else {
-                this._dictionary = DcmJs.data.DicomMessage.readFile(dcmFileBuffer_or_filePath.buffer);
+                this._dictionary = DcmJs.data.DicomMessage.readFile(dcmFileBuffer_or_filePath.buffer, { ignoreErrors: true });
             }
         }
     }
