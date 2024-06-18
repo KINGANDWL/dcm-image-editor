@@ -9,6 +9,7 @@
 import { PngPixelArray, PngPixelBuffer, BitDepth, FourChannelPixelArray } from './UtilTypes';
 import * as PngJs from 'pngjs';
 import * as Sharp from "sharp"
+import { OutputInfo } from 'sharp';
 
 export class ImageUtils {
     /**
@@ -182,7 +183,7 @@ export class ImageUtils {
         height: number,
         // 图像压缩等级
         compressionLevel?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9,
-    }): Promise<Sharp.OutputInfo> {
+    }): Promise<OutputInfo> {
         return ImageUtils.toPngSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.png`);
     }
     /**
@@ -197,7 +198,7 @@ export class ImageUtils {
         height: number,
         // 图像质量（1-100）
         quality?: number,
-    }) {
+    }): Promise<OutputInfo> {
         return ImageUtils.toJpeSharpg(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.jpg`);
     }
     /**
@@ -211,7 +212,7 @@ export class ImageUtils {
         width: number,
         height: number,
         quality?: number,
-    }) {
+    }): Promise<OutputInfo> {
         return ImageUtils.toTiffSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.tiff`);
     }
     /**
@@ -224,7 +225,7 @@ export class ImageUtils {
     static saveAsBmp(_4ChannelPixelArr: PngPixelArray, dir: string, filename: string, config: {
         width: number,
         height: number,
-    }) {
+    }): Promise<OutputInfo> {
         return ImageUtils.toBmpSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.bmp`);
     }
 
@@ -245,7 +246,12 @@ export class ImageUtils {
         // 图像压缩等级
         compressionLevel?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9,
     }): Promise<Buffer> {
-        return ImageUtils.toPngSharp(_4ChannelPixelArr, config).toBuffer();
+        return new Promise((_res, _rej) => {
+            ImageUtils.toPngSharp(_4ChannelPixelArr, config).toBuffer((err, buff, oInfo) => {
+                if (err) { return _rej(err) }
+                return _res(buff);
+            });
+        })
     }
     /**
      * 4通道像素数组转为jpeg二进制文件数据
@@ -259,8 +265,13 @@ export class ImageUtils {
         height: number,
         // 图像质量（1-100）
         quality?: number,
-    }) {
-        return ImageUtils.toJpeSharpg(_4ChannelPixelArr, config).toBuffer();
+    }): Promise<Buffer> {
+        return new Promise((_res, _rej) => {
+            ImageUtils.toJpeSharpg(_4ChannelPixelArr, config).toBuffer((err, buff, oInfo) => {
+                if (err) { return _rej(err) }
+                return _res(buff);
+            });
+        })
     }
     /**
      * 4通道像素数组转为tiff二进制文件数据
@@ -273,8 +284,13 @@ export class ImageUtils {
         width: number,
         height: number,
         quality?: number,
-    }) {
-        return ImageUtils.toTiffSharp(_4ChannelPixelArr, config).toBuffer();
+    }): Promise<Buffer> {
+        return new Promise((_res, _rej) => {
+            ImageUtils.toTiffSharp(_4ChannelPixelArr, config).toBuffer((err, buff, oInfo) => {
+                if (err) { return _rej(err) }
+                return _res(buff);
+            });
+        })
     }
     /**
      * 4通道像素数组转为bmp二进制文件数据
@@ -286,8 +302,13 @@ export class ImageUtils {
     static async toBmpBin(_4ChannelPixelArr: PngPixelArray, config: {
         width: number,
         height: number,
-    }) {
-        return ImageUtils.toBmpSharp(_4ChannelPixelArr, config).toBuffer();
+    }): Promise<Buffer> {
+        return new Promise((_res, _rej) => {
+            ImageUtils.toBmpSharp(_4ChannelPixelArr, config).toBuffer((err, buff, oInfo) => {
+                if (err) { return _rej(err) }
+                return _res(buff);
+            });
+        })
     }
 }
 

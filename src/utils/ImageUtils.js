@@ -197,7 +197,14 @@ class ImageUtils {
      * @param config 宽度、高度、压缩等级
      */
     static async toPngBin(_4ChannelPixelArr, config) {
-        return ImageUtils.toPngSharp(_4ChannelPixelArr, config).toBuffer();
+        return new Promise((_res, _rej) => {
+            ImageUtils.toPngSharp(_4ChannelPixelArr, config).toBuffer((err, buff, oInfo) => {
+                if (err) {
+                    return _rej(err);
+                }
+                return _res(buff);
+            });
+        });
     }
     /**
      * 4通道像素数组转为jpeg二进制文件数据
@@ -207,7 +214,14 @@ class ImageUtils {
      * @param config 宽度、高度、图像质量（1-100）
      */
     static async toJpegBin(_4ChannelPixelArr, config) {
-        return ImageUtils.toJpeSharpg(_4ChannelPixelArr, config).toBuffer();
+        return new Promise((_res, _rej) => {
+            ImageUtils.toJpeSharpg(_4ChannelPixelArr, config).toBuffer((err, buff, oInfo) => {
+                if (err) {
+                    return _rej(err);
+                }
+                return _res(buff);
+            });
+        });
     }
     /**
      * 4通道像素数组转为tiff二进制文件数据
@@ -217,7 +231,14 @@ class ImageUtils {
      * @param config 宽度、高度、图像质量（1-100），位深 (1,2,4,8)
      */
     static async toTiffBin(_4ChannelPixelArr, config) {
-        return ImageUtils.toTiffSharp(_4ChannelPixelArr, config).toBuffer();
+        return new Promise((_res, _rej) => {
+            ImageUtils.toTiffSharp(_4ChannelPixelArr, config).toBuffer((err, buff, oInfo) => {
+                if (err) {
+                    return _rej(err);
+                }
+                return _res(buff);
+            });
+        });
     }
     /**
      * 4通道像素数组转为bmp二进制文件数据
@@ -227,7 +248,14 @@ class ImageUtils {
      * @param config 宽度、高度、图像质量（1-100）
      */
     static async toBmpBin(_4ChannelPixelArr, config) {
-        return ImageUtils.toBmpSharp(_4ChannelPixelArr, config).toBuffer();
+        return new Promise((_res, _rej) => {
+            ImageUtils.toBmpSharp(_4ChannelPixelArr, config).toBuffer((err, buff, oInfo) => {
+                if (err) {
+                    return _rej(err);
+                }
+                return _res(buff);
+            });
+        });
     }
 }
 exports.ImageUtils = ImageUtils;
