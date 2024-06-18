@@ -84,7 +84,7 @@ class ImageUtils {
         return result;
     }
     /**
-     * 4通道像素数组存储为png
+     * 4通道像素数组转为png Sharp
      * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
      * @param dir 目录
      * @param filename 文件名 (不包含.png)
@@ -101,7 +101,7 @@ class ImageUtils {
         return Sharp(pngBuffer).png({ compressionLevel: config.compressionLevel });
     }
     /**
-     * 4通道像素数组存储为jpeg
+     * 4通道像素数组转为jpeg Sharp
      * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
      * @param dir 目录
      * @param filename 文件名 (不包含.jpeg)
@@ -118,7 +118,7 @@ class ImageUtils {
         return Sharp(pngBuffer).jpeg({ quality: config.quality });
     }
     /**
-     * 4通道像素数组存储为tiff
+     * 4通道像素数组转为tiff Sharp
      * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
      * @param dir 目录
      * @param filename 文件名 (不包含.tiff)
@@ -136,7 +136,7 @@ class ImageUtils {
         return Sharp(pngBuffer).tiff({ quality: config.quality, bitdepth: 8 });
     }
     /**
-     * 4通道像素数组存储为bmp
+     * 4通道像素数组转为bmp Sharp
      * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
      * @param dir 目录
      * @param filename 文件名 (不包含.bmp)
