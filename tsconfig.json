@@ -3,10 +3,10 @@
     "./**/*.ts"
   ],
   "compilerOptions": {
-    "experimentalDecorators": true, //开启装饰器【必须】
-    "module": "commonjs", // commonjs 模式【必须】
-    "target": "ES6", // es6标准【至少满足es6】
-    "strict": false, // 关闭严格模式【推荐】，不然会出现一些编译上的繁琐问题 
+    "experimentalDecorators": true, 
+    "module": "commonjs", 
+    "target": "ES2017", 
+    "strict": false, 
     // "outDir": "./out",
     "paths": {},
     "types": [

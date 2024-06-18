@@ -118,7 +118,6 @@ export class DcmUtils {
         ImageUtils.saveAsTiff(pngPixelArray, dir, filename, {
             width: dcmJsWrapper.dataset.Columns,
             height: dcmJsWrapper.dataset.Rows,
-
         })
     }
 

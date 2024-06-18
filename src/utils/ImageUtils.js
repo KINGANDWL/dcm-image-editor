@@ -90,7 +90,7 @@ class ImageUtils {
      * @param filename 文件名 (不包含.png)
      * @param config 宽度、高度、压缩等级
      */
-    static saveAsPng(_4ChannelPixelArr, dir, filename, config) {
+    static toPngSharp(_4ChannelPixelArr, dir, filename, config) {
         if (isNaN(config.compressionLevel)) {
             config.compressionLevel = 0;
         }
@@ -98,7 +98,7 @@ class ImageUtils {
             config.compressionLevel = 0;
         }
         let pngBuffer = ImageUtils.exchangePngPixelArrayToPngPixelBuffer(_4ChannelPixelArr, config.width, config.height);
-        Sharp(pngBuffer).png({ compressionLevel: config.compressionLevel }).toFile(`${dir}/${filename}.png`);
+        return Sharp(pngBuffer).png({ compressionLevel: config.compressionLevel });
     }
     /**
      * 4通道像素数组存储为jpeg
@@ -107,7 +107,7 @@ class ImageUtils {
      * @param filename 文件名 (不包含.jpeg)
      * @param config 宽度、高度、图像质量（1-100）
      */
-    static saveAsJpeg(_4ChannelPixelArr, dir, filename, config) {
+    static toJpeSharpg(_4ChannelPixelArr, dir, filename, config) {
         if (isNaN(config.quality)) {
             config.quality = 100;
         }
@@ -115,7 +115,7 @@ class ImageUtils {
             config.quality = 100;
         }
         let pngBuffer = ImageUtils.exchangePngPixelArrayToPngPixelBuffer(_4ChannelPixelArr, config.width, config.height);
-        Sharp(pngBuffer).jpeg({ quality: config.quality }).toFile(`${dir}/${filename}.jpg`);
+        return Sharp(pngBuffer).jpeg({ quality: config.quality });
     }
     /**
      * 4通道像素数组存储为tiff
@@ -124,7 +124,7 @@ class ImageUtils {
      * @param filename 文件名 (不包含.tiff)
      * @param config 宽度、高度、图像质量（1-100），位深 (1,2,4,8)
      */
-    static saveAsTiff(_4ChannelPixelArr, dir, filename, config) {
+    static toTiffSharp(_4ChannelPixelArr, dir, filename, config) {
         if (isNaN(config.quality)) {
             config.quality = 100;
         }
@@ -133,7 +133,50 @@ class ImageUtils {
         }
         let pngBuffer = ImageUtils.exchangePngPixelArrayToPngPixelBuffer(_4ChannelPixelArr, config.width, config.height);
         // 当前采用的sharp库tiff只支持位深到8
-        Sharp(pngBuffer).tiff({ quality: config.quality, bitdepth: 8 }).toFile(`${dir}/${filename}.tiff`);
+        return Sharp(pngBuffer).tiff({ quality: config.quality, bitdepth: 8 });
+    }
+    /**
+     * 4通道像素数组存储为bmp
+     * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
+     * @param dir 目录
+     * @param filename 文件名 (不包含.bmp)
+     * @param config 宽度、高度、图像质量（1-100）
+     */
+    static toBmpSharp(_4ChannelPixelArr, dir, filename, config) {
+        let pngBuffer = ImageUtils.exchangePngPixelArrayToPngPixelBuffer(_4ChannelPixelArr, config.width, config.height);
+        // bmp保持高质量无压缩
+        return Sharp(pngBuffer).jpeg({ quality: 100 });
+    }
+    //////////////////////////////////////////
+    /**
+     * 4通道像素数组存储为png
+     * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
+     * @param dir 目录
+     * @param filename 文件名 (不包含.png)
+     * @param config 宽度、高度、压缩等级
+     */
+    static async saveAsPng(_4ChannelPixelArr, dir, filename, config) {
+        return ImageUtils.toPngSharp(_4ChannelPixelArr, dir, filename, config).toFile(`${dir}/${filename}.png`);
+    }
+    /**
+     * 4通道像素数组存储为jpeg
+     * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
+     * @param dir 目录
+     * @param filename 文件名 (不包含.jpeg)
+     * @param config 宽度、高度、图像质量（1-100）
+     */
+    static async saveAsJpeg(_4ChannelPixelArr, dir, filename, config) {
+        return ImageUtils.toJpeSharpg(_4ChannelPixelArr, dir, filename, config).toFile(`${dir}/${filename}.jpg`);
+    }
+    /**
+     * 4通道像素数组存储为tiff
+     * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
+     * @param dir 目录
+     * @param filename 文件名 (不包含.tiff)
+     * @param config 宽度、高度、图像质量（1-100），位深 (1,2,4,8)
+     */
+    static async saveAsTiff(_4ChannelPixelArr, dir, filename, config) {
+        return ImageUtils.toTiffSharp(_4ChannelPixelArr, dir, filename, config).toFile(`${dir}/${filename}.tiff`);
     }
     /**
      * 4通道像素数组存储为bmp
@@ -143,9 +186,48 @@ class ImageUtils {
      * @param config 宽度、高度、图像质量（1-100）
      */
     static saveAsBmp(_4ChannelPixelArr, dir, filename, config) {
-        let pngBuffer = ImageUtils.exchangePngPixelArrayToPngPixelBuffer(_4ChannelPixelArr, config.width, config.height);
-        // bmp保持高质量无压缩
-        Sharp(pngBuffer).jpeg({ quality: 100 }).toFile(`${dir}/${filename}.bmp`);
+        return ImageUtils.toBmpSharp(_4ChannelPixelArr, dir, filename, config).toFile(`${dir}/${filename}.bmp`);
+    }
+    ////////////////////////////
+    /**
+     * 4通道像素数组转为png二进制文件数据
+     * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
+     * @param dir 目录
+     * @param filename 文件名 (不包含.png)
+     * @param config 宽度、高度、压缩等级
+     */
+    static async toPngBin(_4ChannelPixelArr, dir, filename, config) {
+        return ImageUtils.toPngSharp(_4ChannelPixelArr, dir, filename, config).toBuffer();
+    }
+    /**
+     * 4通道像素数组转为jpeg二进制文件数据
+     * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
+     * @param dir 目录
+     * @param filename 文件名 (不包含.jpeg)
+     * @param config 宽度、高度、图像质量（1-100）
+     */
+    static async toJpegBin(_4ChannelPixelArr, dir, filename, config) {
+        return ImageUtils.toJpeSharpg(_4ChannelPixelArr, dir, filename, config).toBuffer();
+    }
+    /**
+     * 4通道像素数组转为tiff二进制文件数据
+     * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
+     * @param dir 目录
+     * @param filename 文件名 (不包含.tiff)
+     * @param config 宽度、高度、图像质量（1-100），位深 (1,2,4,8)
+     */
+    static async toTiffBin(_4ChannelPixelArr, dir, filename, config) {
+        return ImageUtils.toTiffSharp(_4ChannelPixelArr, dir, filename, config).toBuffer();
+    }
+    /**
+     * 4通道像素数组转为bmp二进制文件数据
+     * @param _4ChannelPixelArr 4通道像素数组( rgba[ ] )
+     * @param dir 目录
+     * @param filename 文件名 (不包含.bmp)
+     * @param config 宽度、高度、图像质量（1-100）
+     */
+    static async toBmpBin(_4ChannelPixelArr, dir, filename, config) {
+        return ImageUtils.toBmpSharp(_4ChannelPixelArr, dir, filename, config).toBuffer();
     }
 }
 exports.ImageUtils = ImageUtils;
