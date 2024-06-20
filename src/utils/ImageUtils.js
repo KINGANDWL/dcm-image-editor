@@ -34,11 +34,9 @@ class ImageUtils {
      * @param bitDepth 目标位深
      * @param defaultAlpha 默认扩展的alpha通道值（依据源像素数组生成alpha通道）
      */
-    static mapperPixelArrToPNGPixelArray_ByBitDepth_1channel(_1ChannelPixelArr, oldBitDepth, bitDepth, extraAlpha = undefined) {
+    static mapper1ChannelPixelArrTo4Channel(_1ChannelPixelArr, oldBitDepth, bitDepth, extraAlpha = undefined) {
         if (typeof (extraAlpha) != "function") {
-            extraAlpha = function (oldPixel, newPixel) {
-                return 255;
-            };
+            extraAlpha = null;
         }
         // 先分配避免push带来的扩容性能损耗
         let result = new Array(_1ChannelPixelArr.length * 4);
@@ -51,35 +49,38 @@ class ImageUtils {
             result[index] = ((_1ChannelPixelArr[i] * targetMaxPixel) / oldMaxPixel).toFixed(0) * 1;
             result[index + 1] = result[index];
             result[index + 2] = result[index];
-            result[index + 3] = extraAlpha(_1ChannelPixelArr[i], result[index]);
+            result[index + 3] = extraAlpha == null ? 255 : extraAlpha(_1ChannelPixelArr[i], result[index]);
             index += 4;
         }
         return result;
     }
     /**
-     * 利用位深映射4通道像素数组
-     * @param _4ChannelPixelArr 4通道像素数组
-     * @param oldBitDepth 旧的位深
-     * @param bitDepth 目标位深
-     * @param newArray 是否创建新数组（false则修改源数组-目的是节约内存）
+     * 将16位单通道像素数组映射到4通道png像素数组（不推荐使用，会产生新数组对象占用内存）
+     * @param dcmPixelArray
      */
-    static mapperPixelArrToPNGPixelArray_ByBitDepth_4channel(_4ChannelPixelArr, oldBitDepth, bitDepth, newArray = true) {
-        // 先分配避免push带来的扩容性能损耗
-        let result = _4ChannelPixelArr;
-        if (newArray === true) {
-            result = new Array(_4ChannelPixelArr.length);
-        }
-        let oldMaxPixel = Math.pow(2, oldBitDepth);
-        let targetMaxPixel = Math.pow(2, bitDepth);
+    static mapperDcmPixelArrayToPngPixelArray(dcmPixelArray, toRGBA) {
+        let result = new Array(dcmPixelArray.length * 4);
         let index = 0;
-        for (let i = 0; i < _4ChannelPixelArr.length; i++) {
-            // 采用位映射算法来做位深计算
-            //@ts-ignore
-            result[index] = ((_4ChannelPixelArr[i] * targetMaxPixel) / oldMaxPixel).toFixed(0) * 1;
-            result[index + 1] = result[index];
-            result[index + 2] = result[index];
-            result[index + 3] = result[index];
+        for (let i = 0; i < dcmPixelArray.length; i++) {
+            let rgba = toRGBA(i, dcmPixelArray[i]);
+            result[index] = rgba.r;
+            result[index + 1] = rgba.g;
+            result[index + 2] = rgba.b;
+            result[index + 3] = rgba.a;
             index += 4;
+        }
+        return result;
+    }
+    /**
+     * 将4通道png像素数组映射到16位单通道像素数组（不推荐使用，会产生新数组对象占用内存）
+     */
+    static mapperPngPixelArrayToDcmPixelArray(pngPixelArray, toUInt16Pixel) {
+        let result = new Uint16Array(pngPixelArray.length / 4);
+        let index = 0;
+        for (let i = 0; i < pngPixelArray.length; i += 4) {
+            let pixel = toUInt16Pixel(index, pngPixelArray[i], pngPixelArray[i + 1], pngPixelArray[i + 2], pngPixelArray[i + 3]);
+            result[index] = pixel;
+            index++;
         }
         return result;
     }

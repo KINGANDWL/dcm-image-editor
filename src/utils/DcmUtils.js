@@ -7,41 +7,36 @@ class DcmUtils {
     /**
      * 读取dcm为png像素数组
      * @param dcmJsWrapper dcm包装对象
+     * @param autoMapping 自动通过最大最小像素映射
      */
-    static readDcmAsPngPixelArray(dcmJsWrapper) {
+    static readDcmAsPngPixelArray(dcmJsWrapper, autoMapping = false) {
         let pixeArr = new Uint16Array(dcmJsWrapper.dataset.PixelData[0]);
-        let pngPixeArr = ImageUtils_1.ImageUtils.mapperPixelArrToPNGPixelArray_ByBitDepth_1channel(pixeArr, 16, 8);
+        let pngPixeArr;
+        if (autoMapping === true) {
+            let maxPixel = 0, minPixel = 65535;
+            for (let i = 0; i < pixeArr.length; i++) {
+                if (pixeArr[i] > maxPixel)
+                    maxPixel = pixeArr[i];
+                if (pixeArr[i] < minPixel)
+                    minPixel = pixeArr[i];
+            }
+            if (maxPixel < minPixel)
+                throw new Error(`Unknown err: max < min`);
+            pngPixeArr = new Array(pixeArr.length * 4);
+            let pWidth = maxPixel - minPixel, index = 0;
+            for (let i = 0; i < pixeArr.length; i++) {
+                //@ts-ignore
+                pngPixeArr[index] = Math.floor((pngPixeArr[index] - minPixel) / pWidth * 255);
+                pngPixeArr[index + 1] = pngPixeArr[index];
+                pngPixeArr[index + 2] = pngPixeArr[index];
+                pngPixeArr[index + 3] = 255;
+                index += 4;
+            }
+        }
+        else {
+            pngPixeArr = ImageUtils_1.ImageUtils.mapper1ChannelPixelArrTo4Channel(pixeArr, 16, 8);
+        }
         return pngPixeArr;
-    }
-    /**
-     * 将16位像素数组映射到4通道png像素数组（不推荐使用，会产生新数组对象占用内存）
-     * @param dcmPixelArray
-     */
-    static mapperDcmPixelArrayToPngPixelArray(dcmPixelArray, toRGBA) {
-        let result = new Array(dcmPixelArray.length * 4);
-        let index = 0;
-        for (let i = 0; i < dcmPixelArray.length; i++) {
-            let rgba = toRGBA(i, dcmPixelArray[i]);
-            result[index] = rgba.r;
-            result[index + 1] = rgba.g;
-            result[index + 2] = rgba.b;
-            result[index + 3] = rgba.a;
-            index += 4;
-        }
-        return result;
-    }
-    /**
-     * 将16位像素数组映射到4通道png像素数组（不推荐使用，会产生新数组对象占用内存）
-     */
-    static mapperPngPixelArrayToDcmPixelArray(pngPixelArray, toUInt16Pixel) {
-        let result = new Uint16Array(pngPixelArray.length / 4);
-        let index = 0;
-        for (let i = 0; i < pngPixelArray.length; i += 4) {
-            let pixel = toUInt16Pixel(index, pngPixelArray[i], pngPixelArray[i + 1], pngPixelArray[i + 2], pngPixelArray[i + 3]);
-            result[index] = pixel;
-            index++;
-        }
-        return result;
     }
     static defaultImageFilename() {
         // 2023-8-24_16-21-56
