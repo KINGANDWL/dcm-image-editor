@@ -79,10 +79,28 @@ export class DcmJsWrapper {
     get dictionary() {
         return this._dictionary;
     }
-    get dataset(): { [property: string]: any } {
-        return DcmJs.data.DicomMetaDictionary.naturalizeDataset(this._dictionary.dict);;
+    
+    private _dictionary_dict: any = null;
+    get _dataset(): { [property: string]: any } {
+        // 避免多次创建对象
+        if (this._dictionary_dict == null) {
+            this._dictionary_dict = DcmJs.data.DicomMetaDictionary.naturalizeDataset(this._dictionary.dict);;
+        }
+        return this._dictionary_dict;
     }
-    get metaset(): { [property: string]: any } {
+    private _dictionary_meta: any = null;
+    get _metaset(): { [property: string]: any } {
+        // 避免多次创建对象
+        if (this._dictionary_meta == null) {
+            this._dictionary_meta = DcmJs.data.DicomMetaDictionary.naturalizeDataset(this._dictionary.meta);
+        }
+        return this._dictionary_meta;
+    }
+    
+    get dataset() {
+        return DcmJs.data.DicomMetaDictionary.naturalizeDataset(this._dictionary.dict);
+    }
+    get metaset() {
         return DcmJs.data.DicomMetaDictionary.naturalizeDataset(this._dictionary.meta);
     }
 

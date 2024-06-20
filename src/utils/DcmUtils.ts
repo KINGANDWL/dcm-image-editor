@@ -39,7 +39,6 @@ export class DcmUtils {
      */
     static mapperPngPixelArrayToDcmPixelArray(pngPixelArray: PngPixelArray, toUInt16Pixel: (index: number, r: number, g: number, b: number, a: number) => number): DcmPixelArray {
         let result: DcmPixelArray = new Uint16Array(pngPixelArray.length / 4);
-
         let index = 0;
         for (let i = 0; i < pngPixelArray.length; i += 4) {
             let pixel = toUInt16Pixel(index, pngPixelArray[i], pngPixelArray[i + 1], pngPixelArray[i + 2], pngPixelArray[i + 3]);
@@ -59,12 +58,12 @@ export class DcmUtils {
      * @param dir 保存路径
      * @param filename 文件名（不含.Png）
      */
-    static saveAsPng(dcmJsWrapper: DcmJsWrapper, dir: string, filename?: string) {
+    static async saveAsPng(dcmJsWrapper: DcmJsWrapper, dir: string, filename?: string) {
         let pngPixelArray = DcmUtils.readDcmAsPngPixelArray(dcmJsWrapper);
         if (filename == null) {
             filename = DcmUtils.defaultImageFilename();
         }
-        ImageUtils.saveAsPng(pngPixelArray, dir, filename, {
+        return ImageUtils.saveAsPng(pngPixelArray, dir, filename, {
             width: dcmJsWrapper.dataset.Columns,
             height: dcmJsWrapper.dataset.Rows,
             // 默认dmc转png压缩等级6
@@ -77,12 +76,12 @@ export class DcmUtils {
      * @param dir 保存路径
      * @param filename 文件名（不含.Jpeg）
      */
-    static saveAsJpeg(dcmJsWrapper: DcmJsWrapper, dir: string, filename?: string) {
+    static async saveAsJpeg(dcmJsWrapper: DcmJsWrapper, dir: string, filename?: string) {
         let pngPixelArray = DcmUtils.readDcmAsPngPixelArray(dcmJsWrapper);
         if (filename == null) {
             filename = DcmUtils.defaultImageFilename();
         }
-        ImageUtils.saveAsJpeg(pngPixelArray, dir, filename, {
+        return ImageUtils.saveAsJpeg(pngPixelArray, dir, filename, {
             width: dcmJsWrapper.dataset.Columns,
             height: dcmJsWrapper.dataset.Rows,
             quality: 100,
@@ -94,12 +93,12 @@ export class DcmUtils {
      * @param dir 保存路径
      * @param filename 文件名（不含.Bmp）
      */
-    static saveAsBmp(dcmJsWrapper: DcmJsWrapper, dir: string, filename?: string) {
+    static async saveAsBmp(dcmJsWrapper: DcmJsWrapper, dir: string, filename?: string) {
         let pngPixelArray = DcmUtils.readDcmAsPngPixelArray(dcmJsWrapper);
         if (filename == null) {
             filename = DcmUtils.defaultImageFilename();
         }
-        ImageUtils.saveAsBmp(pngPixelArray, dir, filename, {
+        return ImageUtils.saveAsBmp(pngPixelArray, dir, filename, {
             width: dcmJsWrapper.dataset.Columns,
             height: dcmJsWrapper.dataset.Rows,
         })
@@ -110,12 +109,12 @@ export class DcmUtils {
      * @param dir 保存路径
      * @param filename 文件名（不含.Tiff）
      */
-    static saveAsTiff(dcmJsWrapper: DcmJsWrapper, dir: string, filename?: string) {
+    static async saveAsTiff(dcmJsWrapper: DcmJsWrapper, dir: string, filename?: string) {
         let pngPixelArray = DcmUtils.readDcmAsPngPixelArray(dcmJsWrapper);
         if (filename == null) {
             filename = DcmUtils.defaultImageFilename();
         }
-        ImageUtils.saveAsTiff(pngPixelArray, dir, filename, {
+        return ImageUtils.saveAsTiff(pngPixelArray, dir, filename, {
             width: dcmJsWrapper.dataset.Columns,
             height: dcmJsWrapper.dataset.Rows,
         })
@@ -128,10 +127,18 @@ export class DcmUtils {
      * @param dir 保存路径
      * @param filename 文件名（不含.dcm） 
      */
-    static saveAsDcm(dcmJsWrapper: DcmJsWrapper, dir: string, filename: string) {
-        // 更新与存储字典
-        let file_WriterBuffer = dcmJsWrapper.dictionary.write();
-        fs_extra.writeFileSync(`${dir}/${filename}.dcm`, Buffer.from(file_WriterBuffer));
+    static async saveAsDcm(dcmJsWrapper: DcmJsWrapper, dir: string, filename: string) {
+        return new Promise((res, rej) => {
+            // 更新与存储字典
+            let file_WriterBuffer = dcmJsWrapper.dictionary.write();
+            fs_extra.writeFile(`${dir}/${filename}.dcm`, Buffer.from(file_WriterBuffer), (err) => {
+                if (err != null) {
+                    res(null);
+                } else {
+                    rej(err);
+                }
+            });
+        })
     }
 }
 

@@ -53,12 +53,12 @@ class DcmUtils {
      * @param dir 保存路径
      * @param filename 文件名（不含.Png）
      */
-    static saveAsPng(dcmJsWrapper, dir, filename) {
+    static async saveAsPng(dcmJsWrapper, dir, filename) {
         let pngPixelArray = DcmUtils.readDcmAsPngPixelArray(dcmJsWrapper);
         if (filename == null) {
             filename = DcmUtils.defaultImageFilename();
         }
-        ImageUtils_1.ImageUtils.saveAsPng(pngPixelArray, dir, filename, {
+        return ImageUtils_1.ImageUtils.saveAsPng(pngPixelArray, dir, filename, {
             width: dcmJsWrapper.dataset.Columns,
             height: dcmJsWrapper.dataset.Rows,
             // 默认dmc转png压缩等级6
@@ -71,12 +71,12 @@ class DcmUtils {
      * @param dir 保存路径
      * @param filename 文件名（不含.Jpeg）
      */
-    static saveAsJpeg(dcmJsWrapper, dir, filename) {
+    static async saveAsJpeg(dcmJsWrapper, dir, filename) {
         let pngPixelArray = DcmUtils.readDcmAsPngPixelArray(dcmJsWrapper);
         if (filename == null) {
             filename = DcmUtils.defaultImageFilename();
         }
-        ImageUtils_1.ImageUtils.saveAsJpeg(pngPixelArray, dir, filename, {
+        return ImageUtils_1.ImageUtils.saveAsJpeg(pngPixelArray, dir, filename, {
             width: dcmJsWrapper.dataset.Columns,
             height: dcmJsWrapper.dataset.Rows,
             quality: 100,
@@ -88,12 +88,12 @@ class DcmUtils {
      * @param dir 保存路径
      * @param filename 文件名（不含.Bmp）
      */
-    static saveAsBmp(dcmJsWrapper, dir, filename) {
+    static async saveAsBmp(dcmJsWrapper, dir, filename) {
         let pngPixelArray = DcmUtils.readDcmAsPngPixelArray(dcmJsWrapper);
         if (filename == null) {
             filename = DcmUtils.defaultImageFilename();
         }
-        ImageUtils_1.ImageUtils.saveAsBmp(pngPixelArray, dir, filename, {
+        return ImageUtils_1.ImageUtils.saveAsBmp(pngPixelArray, dir, filename, {
             width: dcmJsWrapper.dataset.Columns,
             height: dcmJsWrapper.dataset.Rows,
         });
@@ -104,12 +104,12 @@ class DcmUtils {
      * @param dir 保存路径
      * @param filename 文件名（不含.Tiff）
      */
-    static saveAsTiff(dcmJsWrapper, dir, filename) {
+    static async saveAsTiff(dcmJsWrapper, dir, filename) {
         let pngPixelArray = DcmUtils.readDcmAsPngPixelArray(dcmJsWrapper);
         if (filename == null) {
             filename = DcmUtils.defaultImageFilename();
         }
-        ImageUtils_1.ImageUtils.saveAsTiff(pngPixelArray, dir, filename, {
+        return ImageUtils_1.ImageUtils.saveAsTiff(pngPixelArray, dir, filename, {
             width: dcmJsWrapper.dataset.Columns,
             height: dcmJsWrapper.dataset.Rows,
         });
@@ -120,10 +120,19 @@ class DcmUtils {
      * @param dir 保存路径
      * @param filename 文件名（不含.dcm）
      */
-    static saveAsDcm(dcmJsWrapper, dir, filename) {
-        // 更新与存储字典
-        let file_WriterBuffer = dcmJsWrapper.dictionary.write();
-        fs_extra.writeFileSync(`${dir}/${filename}.dcm`, Buffer.from(file_WriterBuffer));
+    static async saveAsDcm(dcmJsWrapper, dir, filename) {
+        return new Promise((res, rej) => {
+            // 更新与存储字典
+            let file_WriterBuffer = dcmJsWrapper.dictionary.write();
+            fs_extra.writeFile(`${dir}/${filename}.dcm`, Buffer.from(file_WriterBuffer), (err) => {
+                if (err != null) {
+                    res(null);
+                }
+                else {
+                    rej(err);
+                }
+            });
+        });
     }
 }
 exports.DcmUtils = DcmUtils;

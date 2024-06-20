@@ -10,6 +10,8 @@ class DcmJsWrapper {
      * @param dcmFileBuffer_or_filePath
      */
     constructor(dcmFileBuffer_or_filePath) {
+        this._dictionary_dict = null;
+        this._dictionary_meta = null;
         if (dcmFileBuffer_or_filePath == undefined) {
             this._dictionary = new DcmJs.data.DicomDict(DcmJsWrapper.DcmTemplate.meta());
             this._dictionary.dict = DcmJsWrapper.DcmTemplate.dict();
@@ -27,9 +29,23 @@ class DcmJsWrapper {
     get dictionary() {
         return this._dictionary;
     }
+    get _dataset() {
+        // 避免多次创建对象
+        if (this._dictionary_dict == null) {
+            this._dictionary_dict = DcmJs.data.DicomMetaDictionary.naturalizeDataset(this._dictionary.dict);
+            ;
+        }
+        return this._dictionary_dict;
+    }
+    get _metaset() {
+        // 避免多次创建对象
+        if (this._dictionary_meta == null) {
+            this._dictionary_meta = DcmJs.data.DicomMetaDictionary.naturalizeDataset(this._dictionary.meta);
+        }
+        return this._dictionary_meta;
+    }
     get dataset() {
         return DcmJs.data.DicomMetaDictionary.naturalizeDataset(this._dictionary.dict);
-        ;
     }
     get metaset() {
         return DcmJs.data.DicomMetaDictionary.naturalizeDataset(this._dictionary.meta);

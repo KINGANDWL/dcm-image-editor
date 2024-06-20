@@ -156,7 +156,14 @@ class ImageUtils {
      * @param config 宽度、高度、压缩等级
      */
     static async saveAsPng(_4ChannelPixelArr, dir, filename, config) {
-        return ImageUtils.toPngSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.png`);
+        return new Promise((res, rej) => {
+            ImageUtils.toPngSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.png`, (err, outInfo) => {
+                if (err != null) {
+                    return rej(err);
+                }
+                return res(outInfo);
+            });
+        });
     }
     /**
      * 4通道像素数组存储为jpeg
@@ -166,7 +173,14 @@ class ImageUtils {
      * @param config 宽度、高度、图像质量（1-100）
      */
     static async saveAsJpeg(_4ChannelPixelArr, dir, filename, config) {
-        return ImageUtils.toJpeSharpg(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.jpg`);
+        return new Promise((res, rej) => {
+            ImageUtils.toJpeSharpg(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.jpg`, (err, outInfo) => {
+                if (err != null) {
+                    return rej(err);
+                }
+                return res(outInfo);
+            });
+        });
     }
     /**
      * 4通道像素数组存储为tiff
@@ -176,7 +190,14 @@ class ImageUtils {
      * @param config 宽度、高度、图像质量（1-100），位深 (1,2,4,8)
      */
     static async saveAsTiff(_4ChannelPixelArr, dir, filename, config) {
-        return ImageUtils.toTiffSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.tiff`);
+        return new Promise((res, rej) => {
+            ImageUtils.toTiffSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.tiff`, (err, outInfo) => {
+                if (err != null) {
+                    return rej(err);
+                }
+                return res(outInfo);
+            });
+        });
     }
     /**
      * 4通道像素数组存储为bmp
@@ -186,7 +207,14 @@ class ImageUtils {
      * @param config 宽度、高度、图像质量（1-100）
      */
     static saveAsBmp(_4ChannelPixelArr, dir, filename, config) {
-        return ImageUtils.toBmpSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.bmp`);
+        return new Promise((res, rej) => {
+            ImageUtils.toBmpSharp(_4ChannelPixelArr, config).toFile(`${dir}/${filename}.bmp`, (err, outInfo) => {
+                if (err != null) {
+                    return rej(err);
+                }
+                return res(outInfo);
+            });
+        });
     }
     ////////////////////////////
     /**
