@@ -55,6 +55,38 @@ class ImageUtils {
         return result;
     }
     /**
+     * 将单通道像素数组，自动计算最大最小像素，映射到4通道像素数组
+     * @param _1ChannelPixelArr 4通道像素数组
+     * @param defaultAlpha 默认扩展的alpha通道值（依据源像素数组生成alpha通道）
+     */
+    static mapper1ChannelPixelArrTo4Channel_auto(_1ChannelPixelArr, extraAlpha = undefined) {
+        if (typeof (extraAlpha) != "function") {
+            extraAlpha = null;
+        }
+        // 先分配避免push带来的扩容性能损耗
+        let result = new Array(_1ChannelPixelArr.length * 4);
+        let maxPixel = 0, minPixel = 65535;
+        for (let i = 0; i < _1ChannelPixelArr.length; i++) {
+            if (_1ChannelPixelArr[i] > maxPixel)
+                maxPixel = _1ChannelPixelArr[i];
+            if (_1ChannelPixelArr[i] < minPixel)
+                minPixel = _1ChannelPixelArr[i];
+        }
+        if (maxPixel < minPixel)
+            throw new Error(`Unknown err: max < min`);
+        let pWidth = maxPixel - minPixel, index = 0;
+        for (let i = 0; i < _1ChannelPixelArr.length; i++) {
+            //@ts-ignore
+            result[index] = Math.floor((_1ChannelPixelArr[index] - minPixel) / pWidth * 255);
+            result[index + 1] = result[index];
+            result[index + 2] = result[index];
+            result[index + 3] = extraAlpha == null ? 255 : extraAlpha(_1ChannelPixelArr[i], result[index]);
+            ;
+            index += 4;
+        }
+        return result;
+    }
+    /**
      * 将16位单通道像素数组映射到4通道png像素数组（不推荐使用，会产生新数组对象占用内存）
      * @param dcmPixelArray
      */
