@@ -77,7 +77,7 @@ class ImageUtils {
         let pWidth = maxPixel - minPixel, index = 0;
         for (let i = 0; i < _1ChannelPixelArr.length; i++) {
             //@ts-ignore
-            result[index] = Math.floor((_1ChannelPixelArr[index] - minPixel) / pWidth * 255);
+            result[index] = Math.floor((_1ChannelPixelArr[i] - minPixel) / pWidth * 255);
             result[index + 1] = result[index];
             result[index + 2] = result[index];
             result[index + 3] = extraAlpha == null ? 255 : extraAlpha(_1ChannelPixelArr[i], result[index]);
