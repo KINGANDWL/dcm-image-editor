@@ -27,7 +27,7 @@ export class DcmUtils {
             let pWidth = maxPixel - minPixel, index = 0;
             for (let i = 0; i < pixeArr.length; i++) {
                 //@ts-ignore
-                pngPixeArr[index] = Math.floor((pngPixeArr[index] - minPixel) / pWidth * 255);
+                pngPixeArr[index] = Math.floor((pixeArr[index] - minPixel) / pWidth * 255);
                 pngPixeArr[index + 1] = pngPixeArr[index];
                 pngPixeArr[index + 2] = pngPixeArr[index];
                 pngPixeArr[index + 3] = 255;
