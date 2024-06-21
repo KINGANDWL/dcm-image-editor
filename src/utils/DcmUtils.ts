@@ -17,22 +17,7 @@ export class DcmUtils {
         let pixeArr = new Uint16Array(dcmJsWrapper._dataset.PixelData[0]);
         let pngPixeArr: number[];
         if (autoMapping === true) {
-            let maxPixel = 0, minPixel = 65535;
-            for (let i = 0; i < pixeArr.length; i++) {
-                if (pixeArr[i] > maxPixel) maxPixel = pixeArr[i];
-                if (pixeArr[i] < minPixel) minPixel = pixeArr[i];
-            }
-            if (maxPixel < minPixel) throw new Error(`Unknown err: max < min`);
-            pngPixeArr = new Array(pixeArr.length * 4);
-            let pWidth = maxPixel - minPixel, index = 0;
-            for (let i = 0; i < pixeArr.length; i++) {
-                //@ts-ignore
-                pngPixeArr[index] = Math.floor((pixeArr[index] - minPixel) / pWidth * 255);
-                pngPixeArr[index + 1] = pngPixeArr[index];
-                pngPixeArr[index + 2] = pngPixeArr[index];
-                pngPixeArr[index + 3] = 255;
-                index += 4;
-            }
+            pngPixeArr = ImageUtils.mapper1ChannelPixelArrTo4Channel_auto(pixeArr as unknown as number[]);
         } else {
             pngPixeArr = ImageUtils.mapper1ChannelPixelArrTo4Channel(pixeArr as unknown as number[], 16, 8);
         }
