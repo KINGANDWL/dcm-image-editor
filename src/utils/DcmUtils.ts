@@ -14,7 +14,7 @@ export class DcmUtils {
      * @param autoMapping 自动通过最大最小像素映射
      */
     static readDcmAsPngPixelArray(dcmJsWrapper: DcmJsWrapper, autoMapping: boolean = false): PngPixelArray {
-        let pixeArr = new Uint16Array(dcmJsWrapper.dataset.PixelData[0]);
+        let pixeArr = new Uint16Array(dcmJsWrapper._dataset.PixelData[0]);
         let pngPixeArr: number[];
         if (autoMapping === true) {
             let maxPixel = 0, minPixel = 65535;
