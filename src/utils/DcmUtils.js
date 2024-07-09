@@ -9,16 +9,9 @@ class DcmUtils {
      * @param dcmJsWrapper dcm包装对象
      * @param autoMapping 自动通过最大最小像素映射
      */
-    static readDcmAsPngPixelArray(dcmJsWrapper, autoMapping = false) {
-        let pixeArr = new Uint16Array(dcmJsWrapper._dataset.PixelData[0]);
-        let pngPixeArr;
-        if (autoMapping === true) {
-            pngPixeArr = ImageUtils_1.ImageUtils.mapper1ChannelPixelArrTo4Channel_auto(pixeArr);
-        }
-        else {
-            pngPixeArr = ImageUtils_1.ImageUtils.mapper1ChannelPixelArrTo4Channel(pixeArr, 16, 8);
-        }
-        return pngPixeArr;
+    static readDcmAsPngPixelArray(dcmJsWrapper) {
+        let pixeArr = new Uint16Array(dcmJsWrapper._dataset.PixelData[0]); //BufferArray
+        return ImageUtils_1.ImageUtils.mapper1ChannelPixelArrTo4Channel_auto(pixeArr);
     }
     static defaultImageFilename() {
         // 2023-8-24_16-21-56

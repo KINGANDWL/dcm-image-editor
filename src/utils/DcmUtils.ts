@@ -13,15 +13,9 @@ export class DcmUtils {
      * @param dcmJsWrapper dcm包装对象
      * @param autoMapping 自动通过最大最小像素映射
      */
-    static readDcmAsPngPixelArray(dcmJsWrapper: DcmJsWrapper, autoMapping: boolean = false): PngPixelArray {
-        let pixeArr = new Uint16Array(dcmJsWrapper._dataset.PixelData[0]);
-        let pngPixeArr: number[];
-        if (autoMapping === true) {
-            pngPixeArr = ImageUtils.mapper1ChannelPixelArrTo4Channel_auto(pixeArr as unknown as number[]);
-        } else {
-            pngPixeArr = ImageUtils.mapper1ChannelPixelArrTo4Channel(pixeArr as unknown as number[], 16, 8);
-        }
-        return pngPixeArr as PngPixelArray;
+    static readDcmAsPngPixelArray(dcmJsWrapper: DcmJsWrapper): PngPixelArray {
+        let pixeArr = new Uint16Array(dcmJsWrapper._dataset.PixelData[0] as ArrayBuffer);//BufferArray
+        return ImageUtils.mapper1ChannelPixelArrTo4Channel_auto(pixeArr);
     }
 
     private static defaultImageFilename() {

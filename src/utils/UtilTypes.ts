@@ -5,7 +5,7 @@ export type PngBuffer = Buffer;
 /**
  * png类型的像素数组（即rgba四通道像素数组）
  */
-export type PngPixelArray = number[];
+export type PngPixelArray = Buffer;
 /**
  * png像素buffer，即 Buffer.from(PngPixelArray)，也就是只包含4通道的像素的buffer
  */
@@ -17,7 +17,7 @@ export type DcmPixelArray = Uint16Array;
 /**
  * 4通道像素数组
  */
-export type FourChannelPixelArray = PngPixelArray;
+export type FourChannelPixelBuffer = PngPixelArray;
 
 
 /**

@@ -39,7 +39,7 @@ class ImageUtils {
             extraAlpha = null;
         }
         // 先分配避免push带来的扩容性能损耗
-        let result = new Array(_1ChannelPixelArr.length * 4);
+        let result = Buffer.alloc(_1ChannelPixelArr.length * 4);
         let oldMaxPixel = Math.pow(2, oldBitDepth);
         let targetMaxPixel = Math.pow(2, bitDepth);
         let index = 0;
@@ -56,15 +56,15 @@ class ImageUtils {
     }
     /**
      * 将单通道像素数组，自动计算最大最小像素，映射到4通道像素数组
-     * @param _1ChannelPixelArr 4通道像素数组
+     * @param _1ChannelPixelArr 1通道灰度像素数组
      * @param defaultAlpha 默认扩展的alpha通道值（依据源像素数组生成alpha通道）
      */
     static mapper1ChannelPixelArrTo4Channel_auto(_1ChannelPixelArr, extraAlpha = undefined) {
         if (typeof (extraAlpha) != "function") {
             extraAlpha = null;
         }
-        // 先分配避免push带来的扩容性能损耗
-        let result = new Array(_1ChannelPixelArr.length * 4);
+        // 由于可见图像（png、jpg等）都是8位图，因此使用Buffer足矣
+        let result = Buffer.alloc(_1ChannelPixelArr.length * 4);
         let maxPixel = 0, minPixel = 65535;
         for (let i = 0; i < _1ChannelPixelArr.length; i++) {
             if (_1ChannelPixelArr[i] > maxPixel)
@@ -75,9 +75,9 @@ class ImageUtils {
         if (maxPixel < minPixel)
             throw new Error(`Unknown err: max < min`);
         let pWidth = maxPixel - minPixel, index = 0;
+        // 窗宽窗位映射，这一步内存消耗巨大，为什么暂不清楚
         for (let i = 0; i < _1ChannelPixelArr.length; i++) {
-            //@ts-ignore
-            result[index] = Math.floor((_1ChannelPixelArr[i] - minPixel) / pWidth * 255);
+            result[index + 0] = Math.floor((_1ChannelPixelArr[i] - minPixel) / pWidth * 255);
             result[index + 1] = result[index];
             result[index + 2] = result[index];
             result[index + 3] = extraAlpha == null ? 255 : extraAlpha(_1ChannelPixelArr[i], result[index]);
@@ -91,7 +91,7 @@ class ImageUtils {
      * @param dcmPixelArray
      */
     static mapperDcmPixelArrayToPngPixelArray(dcmPixelArray, toRGBA) {
-        let result = new Array(dcmPixelArray.length * 4);
+        let result = Buffer.alloc(dcmPixelArray.length * 4);
         let index = 0;
         for (let i = 0; i < dcmPixelArray.length; i++) {
             let rgba = toRGBA(i, dcmPixelArray[i]);
