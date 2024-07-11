@@ -102,7 +102,7 @@ export class DcmUtils {
             // 更新与存储字典
             let file_WriterBuffer = dcmJsWrapper.dictionary.write();
             fs_extra.writeFile(`${dir}/${filename}.dcm`, Buffer.from(file_WriterBuffer), (err) => {
-                if (err != null) {
+                if (err == null) {
                     res(null);
                 } else {
                     rej(err);
