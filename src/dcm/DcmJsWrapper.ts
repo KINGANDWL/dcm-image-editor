@@ -61,6 +61,14 @@ export class DcmJsWrapper {
      */
     constructor(dcmFileBuffer_or_filePath?: Uint8Array | string) {
         if (dcmFileBuffer_or_filePath == undefined) {
+            /**
+             * 源代码
+             *  function DicomDict(meta) {
+             *      _classCallCheck(this, DicomDict);
+             *      this.meta = meta;
+             *      this.dict = {};
+             *  }
+             */
             this._dictionary = new DcmJs.data.DicomDict(
                 DcmJsWrapper.DcmTemplate.meta()
             )
@@ -79,7 +87,7 @@ export class DcmJsWrapper {
     get dictionary() {
         return this._dictionary;
     }
-    
+
     private _dictionary_dict: any = null;
     get _dataset(): { [property: string]: any } {
         // 避免多次创建对象
@@ -96,7 +104,7 @@ export class DcmJsWrapper {
         }
         return this._dictionary_meta;
     }
-    
+
     get dataset() {
         return DcmJs.data.DicomMetaDictionary.naturalizeDataset(this._dictionary.dict);
     }
@@ -218,6 +226,61 @@ export class DcmJsWrapper {
             Value: [size.Columns]
         })
         this.upsertTag("7FE00010", { vr: VR_ENUM.OB, Value: [buffer.buffer] })
+    }
+
+    copy(): DcmJsWrapper {
+        function copyArrayBufferToBufferLike(src: ArrayBuffer): ArrayBufferLike {
+            var dst = new ArrayBuffer(src.byteLength);
+            let b = new Uint8Array(dst);
+            b.set(new Uint8Array(src));
+            return b.buffer;
+        }
+
+        const copyDataTo = (src: { [tag: string]: DicomElement }, target: { [tag: string]: { vr: VR_ENUM, Value: any[] } }) => {
+            let dictTags = Object.keys(src);
+            for (let eachTag of dictTags) {
+                let el = src[eachTag];
+
+                if (el.Value != null && (Array.isArray(el.Value) || el.Value instanceof Array)) {
+                    let newValueArr: any[] = [];
+                    for (let eachV of el.Value) {
+                        let newValue: any = null;
+                        if (eachV instanceof ArrayBuffer) {
+                            newValue = copyArrayBufferToBufferLike(eachV);
+                        } else {
+                            try {
+                                newValue = JSON.parse(JSON.stringify(eachV));
+                            } catch (err) {
+                                newValue = eachV;
+                            }
+                        }
+                        newValueArr.push(newValue);
+                    }
+                    target[eachTag.toLowerCase()] = { vr: el.vr, Value: newValueArr };
+                } else {
+                    let newValue: any = null;
+                    try {
+                        newValue = JSON.parse(JSON.stringify(el.Value));
+                    } catch (err) {
+                        newValue = el.Value;
+                    }
+                    target[eachTag.toLowerCase()] = { vr: el.vr, Value: newValue };
+                }
+            }
+            return target;
+        }
+
+
+        let newDcm = new DcmJsWrapper();
+        let newMeta: { [tag: string]: { vr: VR_ENUM, Value: any[] } } = {};
+        let newDict: { [tag: string]: { vr: VR_ENUM, Value: any[] } } = {};
+        newMeta = copyDataTo(this._dictionary.meta, newMeta);
+        newDict = copyDataTo(this._dictionary.dict, newDict);
+
+        newDcm._dictionary = new DcmJs.data.DicomDict(newMeta);
+        newDcm._dictionary.dict = newDict;
+
+        return newDcm;
     }
 
 }

@@ -13,6 +13,14 @@ class DcmJsWrapper {
         this._dictionary_dict = null;
         this._dictionary_meta = null;
         if (dcmFileBuffer_or_filePath == undefined) {
+            /**
+             * 源代码
+             *  function DicomDict(meta) {
+             *      _classCallCheck(this, DicomDict);
+             *      this.meta = meta;
+             *      this.dict = {};
+             *  }
+             */
             this._dictionary = new DcmJs.data.DicomDict(DcmJsWrapper.DcmTemplate.meta());
             this._dictionary.dict = DcmJsWrapper.DcmTemplate.dict();
         }
@@ -150,6 +158,58 @@ class DcmJsWrapper {
             Value: [size.Columns]
         });
         this.upsertTag("7FE00010", { vr: VR_enum_1.VR_ENUM.OB, Value: [buffer.buffer] });
+    }
+    copy() {
+        function copyArrayBufferToBufferLike(src) {
+            var dst = new ArrayBuffer(src.byteLength);
+            let b = new Uint8Array(dst);
+            b.set(new Uint8Array(src));
+            return b.buffer;
+        }
+        const copyDataTo = (src, target) => {
+            let dictTags = Object.keys(src);
+            for (let eachTag of dictTags) {
+                let el = src[eachTag];
+                if (el.Value != null && (Array.isArray(el.Value) || el.Value instanceof Array)) {
+                    let newValueArr = [];
+                    for (let eachV of el.Value) {
+                        let newValue = null;
+                        if (eachV instanceof ArrayBuffer) {
+                            newValue = copyArrayBufferToBufferLike(eachV);
+                        }
+                        else {
+                            try {
+                                newValue = JSON.parse(JSON.stringify(eachV));
+                            }
+                            catch (err) {
+                                newValue = eachV;
+                            }
+                        }
+                        newValueArr.push(newValue);
+                    }
+                    target[eachTag.toLowerCase()] = { vr: el.vr, Value: newValueArr };
+                }
+                else {
+                    let newValue = null;
+                    try {
+                        newValue = JSON.parse(JSON.stringify(el.Value));
+                    }
+                    catch (err) {
+                        newValue = el.Value;
+                    }
+                    target[eachTag.toLowerCase()] = { vr: el.vr, Value: newValue };
+                }
+            }
+            return target;
+        };
+        let newDcm = new DcmJsWrapper();
+        let newMeta = {};
+        let newDict = {};
+        newMeta = copyDataTo(this._dictionary.meta, newMeta);
+        newDict = copyDataTo(this._dictionary.dict, newDict);
+        newDcm._dictionary = new DcmJs.data.DicomDict(newMeta);
+        newDcm._dictionary.dict = newDict;
+        return newDcm;
     }
 }
 exports.DcmJsWrapper = DcmJsWrapper;
