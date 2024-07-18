@@ -40,6 +40,8 @@ build/Release
 
 # Dependency directories
 node_modules/
+node_modules_win32/
+node_modules_win64/
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)

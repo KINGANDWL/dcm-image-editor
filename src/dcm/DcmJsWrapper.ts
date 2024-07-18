@@ -128,7 +128,7 @@ export class DcmJsWrapper {
      * @param tagName 标签名（00310010）
      */
     getTag(tagName: string): DicomElement | null {
-        return this._dictionary.dict[tagName];
+        return this._dictionary.dict[tagName.toUpperCase()];
     }
 
     /**
@@ -138,7 +138,7 @@ export class DcmJsWrapper {
      */
     upsertTag(tagName: string, element: DicomElement) {
         //@ts-ignore
-        this._dictionary.upsertTag(tagName, element.vr, element.Value);
+        this._dictionary.upsertTag(tagName.toUpperCase(), element.vr, element.Value);
     }
 
     /**

@@ -70,7 +70,7 @@ class DcmJsWrapper {
      * @param tagName 标签名（00310010）
      */
     getTag(tagName) {
-        return this._dictionary.dict[tagName];
+        return this._dictionary.dict[tagName.toUpperCase()];
     }
     /**
      * 更新或插入标签; 当tagName小于 00310000 时容易碰到插入失败情况，要求组号必须为奇数且id号不允许为0000
@@ -79,7 +79,7 @@ class DcmJsWrapper {
      */
     upsertTag(tagName, element) {
         //@ts-ignore
-        this._dictionary.upsertTag(tagName, element.vr, element.Value);
+        this._dictionary.upsertTag(tagName.toUpperCase(), element.vr, element.Value);
     }
     /**
      * 获取dcm的16位图像像素大小（个数）。dcm本质上是16位图像，但是存储方式是8位存储格式
