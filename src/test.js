@@ -8,21 +8,33 @@
 // import { DcmUtils } from "./utils/DcmUtils";
 // import { VR_ENUM } from './dcm/VR.enum';
 // import { ImageUtils } from './utils/ImageUtils';
-// let dcmjsWrapper = new DcmJsWrapper(path.join(__dirname, "../resources/test.dcm"));
-// // dcmjsWrapper.upsertTag("00810010", { vr: VR_ENUM.LO, Value: ["This is myTag"] })
 // let pixelArr = []
-// for(let i=0; i<25; i++){
-// 	for(let k=0; k<25; k++){
-// 		pixelArr.push(65535)
-// 	}
+// for (let i = 0; i < 25; i++) {
+//     for (let k = 0; k < 25; k++) {
+//         pixelArr.push(i * k)
+//     }
 // }
-// let dcmjsWrapper2 = new DcmJsWrapper();
-// // dcmjsWrapper2.resetPixel_Uint16Array(Uint16Array.from(pixelArr),25)
-// dcmjsWrapper2.setPixel(dcmjsWrapper.getPixelUint16Array(),1560,2048)
-// dcmjsWrapper2.upsertTag("00810010", { vr: VR_ENUM.LO, Value: ["This is myTag"] })
-// DcmUtils.saveAsDcm(dcmjsWrapper2, path.join(__dirname, "../resources/"), "test2");
-// // DcmUtils.saveAsPng(dcmjsWrapper2, path.join(__dirname, "../resources/"), "test2");
-// // DcmUtils.saveAsJpeg(dcmjsWrapper2, path.join(__dirname, "../resources/"), "test2");
-// // DcmUtils.saveAsBmp(dcmjsWrapper2, path.join(__dirname, "../resources/"), "test2");
-// // DcmUtils.saveAsTiff(dcmjsWrapper2, path.join(__dirname, "../resources/"), "test2");
-// console.log(dcmjsWrapper2.dataset)
+// var dcmjsWrapper = new DcmJsWrapper();
+// dcmjsWrapper.setPixel(Uint16Array.from(pixelArr), 25);
+// dcmjsWrapper.upsertTag("005104B7", { vr: VR_ENUM.LT, Value: ["005104B7"] });
+// dcmjsWrapper.upsertTag("005104B9", { vr: VR_ENUM.LT, Value: "005104B9" });
+// dcmjsWrapper.upsertTag("005104BB", { vr: VR_ENUM.ST, Value: ["005104BB"] });
+// dcmjsWrapper.upsertTag("005104BD", { vr: VR_ENUM.ST, Value: "005104BD" });
+// dcmjsWrapper.upsertTag("00510555", { vr: VR_ENUM.LT, Value: ["00510555"] });
+// dcmjsWrapper.upsertTag("00510557", { vr: VR_ENUM.LT, Value: "00510557" });
+// dcmjsWrapper.upsertTag("00510559", { vr: VR_ENUM.ST, Value: ["00510559"] });
+// dcmjsWrapper.upsertTag("0051055B", { vr: VR_ENUM.ST, Value: "0051055B" });
+// console.log(dcmjsWrapper.getTag("00510559"))
+// console.log(dcmjsWrapper.getTag("0051055B"))
+// var dcmjsWrapper2 = dcmjsWrapper.copy();
+// dcmjsWrapper2.upsertTag("005104B7", { vr: VR_ENUM.LT, Value: ["005104B7-2"] });
+// dcmjsWrapper2.upsertTag("005104B9", { vr: VR_ENUM.LT, Value: "005104B9-2" });
+// dcmjsWrapper2.upsertTag("005104BB", { vr: VR_ENUM.ST, Value: ["005104BB-2"] });
+// dcmjsWrapper2.upsertTag("005104BD", { vr: VR_ENUM.ST, Value: "005104BD-2" });
+// dcmjsWrapper2.upsertTag("00510555", { vr: VR_ENUM.LT, Value: ["00510555-2"] });
+// dcmjsWrapper2.upsertTag("00510557", { vr: VR_ENUM.LT, Value: "00510557-2" });
+// dcmjsWrapper2.upsertTag("00510559", { vr: VR_ENUM.ST, Value: ["00510559-2"] });
+// dcmjsWrapper2.upsertTag("0051055B", { vr: VR_ENUM.ST, Value: "0051055B-2" });
+// console.log(dcmjsWrapper2.getTag("00510559"))
+// console.log(dcmjsWrapper2.getTag("0051055B"))
+// DcmUtils.saveAsDcm(dcmjsWrapper2, path.join(__dirname, "./"), new Date().valueOf().toString());

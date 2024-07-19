@@ -133,15 +133,23 @@ export class DcmJsWrapper {
 
     /**
      * 读取标签
-     * @param tagName 标签名（00310010）
+     * @param tagName 标签名（类似于00310010）
      */
     getTag(tagName: string): DicomElement | null {
         return this._dictionary.dict[tagName.toUpperCase()];
     }
 
     /**
-     * 更新或插入标签; 当tagName小于 00310000 时容易碰到插入失败情况，要求组号必须为奇数且id号不允许为0000
-     * @param tagName 标签名
+     * 更新或插入私有标签; 当tagName小于 00310000 时容易碰到插入失败情况
+     * 要求组号：1、必须为奇数，也就是tagName>>>16必须是奇数  2、id号必须在(0x100,0x000)范围内，也就是tagName&0x0100
+     * 这是源码对于私有标签的描述
+        key: "isPrivateCreator",
+	    value: function isPrivateCreator() {
+	        var group = this.group(); //tagName>>>16
+	        var element = this.element(); //tagName&0xffff
+	        return group % 2 === 1 && element < 0x100 && element > 0x00;
+	    }
+     * @param tagName 标签名，例如00310000
      * @param element 元素
      */
     upsertTag(tagName: string, element: DicomElement) {
@@ -256,7 +264,7 @@ export class DcmJsWrapper {
                         }
                         newValueArr.push(newValue);
                     }
-                    target[eachTag.toLowerCase()] = { vr: el.vr, Value: newValueArr };
+                    target[eachTag.toUpperCase()] = { vr: el.vr, Value: newValueArr };
                 } else {
                     let newValue: any = null;
                     try {
@@ -264,7 +272,7 @@ export class DcmJsWrapper {
                     } catch (err) {
                         newValue = el.Value;
                     }
-                    target[eachTag.toLowerCase()] = { vr: el.vr, Value: newValue };
+                    target[eachTag.toUpperCase()] = { vr: el.vr, Value: newValue };
                 }
             }
             return target;
