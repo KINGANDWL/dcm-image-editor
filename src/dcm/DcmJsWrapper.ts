@@ -156,6 +156,17 @@ export class DcmJsWrapper {
         //@ts-ignore
         this._dictionary.upsertTag(tagName.toUpperCase(), element.vr, element.Value);
     }
+    
+    /**
+     * 删除字段
+     * @param tagName 
+     */
+    removeTag(tagName: string){
+        let _t = tagName.toUpperCase();
+        if(this._dictionary.dict[_t] != null){
+            delete this._dictionary.dict[_t];
+        }
+    }
 
     /**
      * 获取dcm的16位图像像素大小（个数）。dcm本质上是16位图像，但是存储方式是8位存储格式
